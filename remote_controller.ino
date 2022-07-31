@@ -1,20 +1,23 @@
-#include <ESP8266WiFi.h>
-#include <Arduino.h>
 #include <Wire.h>
+#include <Arduino.h>
+#include <ESP8266WiFi.h>
+
 
 const char* ssid = "Not Creepy Van Outside";      // WiFi name
-const char* password = "Athlete99!";              // WiFi password
+const char* password = "";                        // WiFi password
 const char* host = "192.168.1.4";                 // Local ESP8266 IP
 const char* TSserver = "api.thingspeak.com";      // Thingspeak API server
-const String apiKey = "8C5RJLITHO074GJ5";         // Thingspeak write API key
+const String apiKey = "";                         // Thingspeak write API key
 
-const int relayPin = 5;                           // Relay signal wire connected to pin D1 on ESP (D1 = GPIO 5)
 const int port = 420;                             // Port through which requests are routed through
+const int relayPin = 5;                           // Relay signal wire connected to pin D1 on ESP (D1 = GPIO 5)
 
 WiFiServer server(420);
 
-bool stateChange = false;
+
 int state;
+bool stateChange = false;
+
 
 
 void setup()
@@ -25,24 +28,29 @@ void setup()
   pinMode(relayPin, OUTPUT);
   digitalWrite(relayPin, LOW);
 
-  Serial.println(); Serial.println();
-  Serial.print("Connecting to "); Serial.println(ssid);
+  Serial.println();
+  Serial.println();
+  Serial.print("Connecting to ");
+  Serial.println(ssid);
 
   WiFi.begin(ssid, password);
-
-  while ( WiFi.status() != WL_CONNECTED )
+  while (WiFi.status() != WL_CONNECTED)
   {
     delay(500);
     Serial.print(".");
   }
   
-  Serial.println(); Serial.println("WiFi connected"); Serial.println();
+  Serial.println();
+  Serial.println("WiFi connected");
+  Serial.println();
 
   server.begin();
   
-  Serial.println("Server started"); Serial.print("Local IP: ");
+  Serial.println("Server started");
+  Serial.print("Local IP: ");
   Serial.println(WiFi.localIP());
-  Serial.print("Go to 199.120.96.230:"); Serial.print(port);
+  Serial.print("Go to 199.120.96.230:");
+  Serial.print(port);
   Serial.println(" to access heater controls");
 }
 
@@ -51,32 +59,32 @@ void setup()
 void loop()
 {
 
-  if ( stateChange == false )
+  if (stateChange == false)
   {   
     WiFiClient client = server.available();
     
-    if ( !client ) {return;}                            // Check if a client has connected
-
-    if ( client )
+    if (!client) return;                                // Check if a client has connected
+    
+    if (client)
     {
       delay(100);
   
-      if ( client.available() )
+      if (client.available())
       {
         delay(100);
         String req = client.readStringUntil('\r');      // Read first line of request
         client.flush();
   
-        if ( req.indexOf("") != -10 )                   // Match the client's request
+        if (req.indexOf("") != -10)                     // Match the client's request
         {
-          if ( req.indexOf("/OFF") != -1 )              // Check for OFF request
+          if (req.indexOf("/OFF") != -1)                // Check for OFF request
           {
             digitalWrite(relayPin, LOW);                // Turn relay off
             Serial.println("OFF");
             state = 0;
             stateChange = true;
           }
-          if ( req.indexOf("/ON") != -1 )               // Check for ON request
+          if (req.indexOf("/ON") != -1)                 // Check for ON request
           {
             digitalWrite(relayPin, HIGH);               // Turn relay on
             Serial.println("ON");
@@ -109,13 +117,13 @@ void loop()
   }
 
   
-  else if ( stateChange = true )                        // Send updated heater state to Thingspeak
+  else if (stateChange = true)                          // Send updated heater state to Thingspeak
   {
     WiFiClient client;
     delay(100);
-    for ( int c = 0; c < 3; c++ )                       // Spam 3 times
+    for (int c = 0; c < 3; c++)                         // Spam 3 times
     {
-      if ( client.connect(TSserver, 80) )
+      if (client.connect(TSserver, 80))
       {
         delay(100);
         String sendData = apiKey+"&field4="+String(state)+"&field5="+String(state)+"\r\n\r\n";
