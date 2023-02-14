@@ -6,6 +6,6 @@ main.ino - inside temperature & humidity ESP
 outside.ino - outside temperature/API handler ESP         
 remote_controller.ino - direct heater controller ESP     
                                   
-matthew-kaufman-3@uiowa.edu controls insde temp, humidity, heater state                       
-ranjeetpajeet@gmail.com controls outside temperature & hosts prediction chart                             
-fluxonyou@gmail.com controls delta T and predicted inside temp
+acc1 controls insde temp, humidity, heater state                       
+acc2 controls outside temperature & hosts prediction chart                             
+acc3 controls delta T and predicted inside temp
